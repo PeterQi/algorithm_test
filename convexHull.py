@@ -131,14 +131,19 @@ def angle_sort(points):
             angle += Pi
         points2.append([i, angle])
     points2 = sorted(points2, key=lambda p:p[1])
-    sorted_points = [points[points2[0][0]]]
-    tmp_point_angle = points2[0][1]
-    the_point = points2[0]
-    dis = 0
+    sorted_points = []
+    last_point_angle = points2[0][1]
+    last_point = points[points2[0][0]]
+    
     for i in range(1, num):
-        if points2[i][1] == tmp_point_angle:
-            
-        sorted_points.append(points[points2[i][0]])
+        if points2[i][1] != last_point_angle:#极角不同的顶点则可以插入
+            sorted_points.append(last_point)
+            last_point_angle = points2[i][1]
+            last_point = points[points2[i][0]]
+        else:
+            if math.fabs(points[points2[i][0]][0] - points[points2[0][0]][0]) - math.fabs(last_point[0] - points[points2[0][0]][0])>0:#极角相同的该点比上一个节点要更远
+                last_point = points[points2[i][0]]
+    sorted_points.append(last_point)
     return sorted_points
 if __name__ == "__main__":
     #points_num = 1
