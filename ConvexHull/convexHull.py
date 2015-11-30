@@ -352,12 +352,12 @@ if __name__ == "__main__":
     t1 = Timer("printDivideResult(points)", "from __main__ import printDivideResult; points = "+str(points))
     time1 = str(t1.timeit(1))
     print "Time: "+time1+"s"
-    logToDB([points_num, time1, 0])
+    #logToDB([points_num, time1, 0])
     print "GrahamScan:"
     t2 = Timer("GrahamScan(points)", "from __main__ import GrahamScan; points = "+str(points))
     time2 = str(t2.timeit(1))
     print "Time: "+time2+"s"
-    logToDB([points_num, time2, 1])
+    #logToDB([points_num, time2, 1])
     print "Brute:"
     t3 = Timer("BruteForceCH1(points)", "from __main__ import BruteForceCH1; points = "+str(points))
     time3 = str(t3.timeit(1))
