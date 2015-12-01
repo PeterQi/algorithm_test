@@ -2,7 +2,10 @@
 import random
 from timeit import Timer
 import Queue
+from heapq import *
+import os
 import math
+import copy
 longest_distance = 100
 def random_figure(num, full = False):#随机生成图，full为True时生成有权值的完全图，full为False时生成无权值的非完全图
     figure = [[0 for i in range(num)]for j in range(num)]
@@ -162,32 +165,206 @@ def sDFS(figure, adj = []):
     else:
         print "not exist"
         return False
+ 
+def figure_change(figure):#更新矩阵
+    num = len(figure)
+    changed_figure = figure
+    zero_points = []
+    limit = 0
+    for i in range(num):
+        change_flag = False
+        row_min = longest_distance*num
+        for j in range(num):
+            if figure[i][j]<0:
+                continue
+            if figure[i][j]==0:
+                row_min = 0
+                zero_points.append((i,j))
+                continue
+            if figure[i][j]<row_min:
+                change_flag = True
+                row_min = figure[i][j]
+        if row_min>0 and change_flag:
+            limit += row_min
+            for j in range(num):
+                changed_figure[i][j] -= row_min
+                if changed_figure[i][j]==0:
+                    zero_points.append((i, j))
+    for j in range(num):
+        col_min = longest_distance*num
+        change_flag = False
+        for i in range(num):
+            if changed_figure[i][j]<0:
+                continue
+            if changed_figure[i][j]<col_min:
+                col_min = changed_figure[i][j]
+                change_flag = True
+        if col_min>0 and change_flag:
+            limit += col_min
+            for i in range(num):
+                changed_figure[i][j] -= col_min
+                if changed_figure[i][j] == 0:
+                    zero_points.append((i, j))
+    return [limit, changed_figure, zero_points]
+
+def exist_path(figure_E):#返回不能使用的边集合
+    num = len(figure_E)
+    next = [-1 for i in range(num)]
+    last = [-1 for i in range(num)]
+    not_path = []
+    for i in range(num):
+        for j in range(i):
+            if figure_E[i][1]==figure_E[j][0]:
+                next[i] = j
+                last[j] = i
+                continue
+            if figure_E[i][0]==figure_E[j][1]:
+                next[j] = i
+                last[i] = j
+    for i in range(num):
+        if last[i]==-1:
+            it = i
+            while next[it]!=-1:
+                it = next[it]
+            if it!=i:
+                not_path.append((figure_E[it][1], figure_E[i][0]))
+    return not_path
+
+def branch_cut(figure):#分支限界法
+    h = []
+    num = len(figure)
+    cf = figure_change(figure)
+    heappush(h, cf+[[]])#每一个节点，0表示路径下界，1表示其邻接矩阵，2表示为0的节点集合，3表示已有路径集合
+    Hamiltonian = longest_distance*num
+    Hamiltonian_path = -1
+    while len(h)>0:
+        top = heappop(h)
+        if top[0]>=Hamiltonian:
+            continue
+        print top[0]
+        for i in top[1]:
+            print i
+        print top[2]
+        print top[3]
+        f = []
+        for point in top[2]:
+            row_min = longest_distance*num
+            col_min = longest_distance*num
+            for i in range(num):
+                if top[1][point[0]][i]>=0 and i != point[1]:
+                    if top[1][point[0]][i]<row_min:
+                        row_min = top[1][point[0]][i]
+                if top[1][i][point[1]]>=0 and i != point[0]:
+                    if top[1][i][point[1]]<col_min:
+                        col_min = top[1][i][point[1]]
+            f.append((point, row_min+col_min))
+        max_point = 0
         
+        for i in range(1, len(f)):
+            if f[i][1]>f[max_point][1]:
+                max_point = i
+                
+        
+        if len(top[3])+1 == num:#找到一个解
+            print top[0]
+            for i in top[1]:
+                print i
+            print top[2]
+            print top[3]
+            if top[0]+top[1][chosen_line[0]][chosen_line[1]]<Hamiltonian:
+                Hamiltonian = top[0]+top[1][chosen_line[0]][chosen_line[1]]
+                Hamiltonian_path = top[3]+[chosen_line]
+                continue
+        #print max_point
+        chosen_line = f[max_point][0]#下次扩展该节点
+        leftnode_figure = copy.deepcopy(top[1])
+        rightnode_figure = copy.deepcopy(top[1])
+        
+        if len(top[3])+1 != num:#防止出现非哈密顿环
+            not_path = exist_path(top[3]+[chosen_line])
+            #not_path = []
+            for i in not_path:
+                leftnode_figure[i[0]][i[1]] = -1
+        
+        for i in range(num):
+            leftnode_figure[chosen_line[0]][i] = -1
+            leftnode_figure[i][chosen_line[1]] = -1
+        tmp_cf = figure_change(leftnode_figure)
+        
+        leftnode = [tmp_cf[0]+top[0], tmp_cf[1], tmp_cf[2], top[3]+[chosen_line]]
+        
+        rightnode_figure[chosen_line[0]][chosen_line[1]] = -1
+        tmp_cf2 = figure_change(rightnode_figure)
+        rightnode = [tmp_cf2[0]+top[0], tmp_cf2[1], tmp_cf2[2], top[3]]
+        #print chosen_line
+        #print leftnode[0], leftnode[3]
+        #print rightnode[0]
+        heappush(h, leftnode)
+        heappush(h, rightnode)
+    return Hamiltonian_path
+def print_path(path):#打印分支限界法的输出
+    num = len(path)
+    next = [-1 for i in range(num)]
+    last = [-1 for i in range(num)]
+    print path
+    return
+    for i in range(num):
+        for j in range(i):
+            if path[i][1]==path[j][0]:
+                next[i] = j
+                last[j] = i
+                continue
+            if path[i][0]==path[j][1]:
+                next[j] = i
+                last[i] = j
+    it = 0
+    print it,
+    while next[it]!=0:
+        it = next[it]
+        print it,
+    print 0
+
 if __name__ == "__main__":
     figure = [[0,1,0,1,1],
               [1,0,1,1,1],
               [0,1,0,1,0],
               [1,1,1,0,0],
               [1,1,0,0,0]]
+    figure2 = [[-1,3,93,13,33,9,57],
+               [4,-1,77,42,21,16,34],
+               [45,17,-1,36,16,28,25],
+               [39,90,80,-1,56,7,91],
+               [28,46,88,33,-1,25,57],
+               [3,88,18,46,92,-1,7],
+               [44,26,33,27,84,39,-1]]
+    #E = ((3,4), (1,2), (2,3), (5,6), (7,9), (9,8))
+    #p = exist_path(E)
+    #print p
     num = 10
-    figure = random_figure(num)
-    adj = adjacent(figure)
-    t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
-    t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
-    t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
-    t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
-    T1 = t1.timeit(10)
-    T2 = t2.timeit(10)
-    T3 = t3.timeit(10)
-    T4 = t4.timeit(10)
-    if T1>T3:
-        print "yes"
-    else:
-        print "no"
-    if T2>T4:
-        print "yes"
-    else:
-        print "no"
+    #figure = random_figure(num, True)
+    path = branch_cut(figure2)
+    print_path(path)
+    #for i in figure:
+    #    print i
+    
+    #figure = random_figure(num)
+    #adj = adjacent(figure)
+    #t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
+    #t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
+    #t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
+    #t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
+    #T1 = t1.timeit(10)
+    #T2 = t2.timeit(10)
+    #T3 = t3.timeit(10)
+    #T4 = t4.timeit(10)
+    #if T1>T3:
+    #    print "yes"
+    #else:
+    #    print "no"
+    #if T2>T4:
+    #    print "yes"
+    #else:
+    #    print "no"
     #print T1, T3
     #print T2, T4
     
