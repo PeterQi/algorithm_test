@@ -160,6 +160,11 @@ def BruteForceCH1(points):#蛮力算法
     if  num == 3:
         sortANDprint(points)
         return points
+    lines = [[0 for j in range(num)] for i in range(num)]
+    for i in range(num):
+        for j in range(i):
+            lines[i][j] = line_equation(points[i], points[j])
+            lines[j][i] = lines[i][j]
     convexHullIndexs = range(num)
     for i in range(num):
         for j in range(num):
@@ -171,7 +176,7 @@ def BruteForceCH1(points):#蛮力算法
                 for q in range(num):
                     if q == p or q == j or q == i:
                         continue
-                    ij_line = line_equation(points[i], points[j])
+                    ij_line = lines[i][j]
                     a_line = is_line(ij_line, points[p])
                     if equal_zero(a_line):#ijp三点成线
                         if equal_zero(is_line(ij_line, points[q])):#四点成线
@@ -186,9 +191,9 @@ def BruteForceCH1(points):#蛮力算法
                         continue
                     #ijp三点不成线
                     if is_line(ij_line, points[q])*is_line(ij_line, points[p])>=0:
-                        ip_line = line_equation(points[i], points[p])
+                        ip_line = lines[i][p]
                         if is_line(ip_line, points[q])*is_line(ip_line, points[j])>=0:
-                            jp_line = line_equation(points[j], points[p])
+                            jp_line = lines[j][p]
                             if is_line(jp_line, points[q])*is_line(jp_line, points[i])>=0:
                                 convexHullIndexs[q] = -1#在ijp三角形内部或之上，删除该点
     convexHull = []
