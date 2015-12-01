@@ -413,13 +413,14 @@ if __name__ == "__main__":
     #    figure = random_figure(num, True)
     #    path1 = branch_cut(figure)
     #    print_path(path1)
-    for i in range(8, 21, 2):
-        num = i
-        figure = random_figure(num)
-        #adj = adjacent(figure)
-        t1 = Timer("print_path(branch_cut(figure))", "from __main__ import print_path, branch_cut; figure="+str(figure))
-        T1 = t1.timeit(1)
-        logToDB([num, T1, "branch_cut"])
+    for i in range(100):
+        for i in range(8, 21, 2):
+            num = i
+            figure = random_figure(num, True)
+            #adj = adjacent(figure)
+            t1 = Timer("print_path(branch_cut(figure))", "from __main__ import print_path, branch_cut; figure="+str(figure))
+            T1 = t1.timeit(1)
+            logToDB([num, T1, "branch_cut"])
         
     #if T1>T3:
     #    print "yes"

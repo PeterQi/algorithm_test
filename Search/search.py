@@ -36,7 +36,7 @@ def adjacent(figure):#求邻接点集合
         adj.append([])
         adj[num].append(len(adj[i]))
     return adj
-    
+
 def BFS(figure, adj = []):
     num = len(figure)
     Hamiltonian = False
@@ -46,8 +46,12 @@ def BFS(figure, adj = []):
         adj = adjacent(figure)
     for i in adj[0]:
         l.put([i])
+    print_level = 1
     while not l.empty():
         top = l.get()
+        if len(top)>=print_level:
+            print print_level
+            print_level+=1
         if len(top)==num and top[-1] == 0:
             Hamiltonian = True
             break
@@ -413,22 +417,23 @@ if __name__ == "__main__":
     #    figure = random_figure(num, True)
     #    path1 = branch_cut(figure)
     #    print_path(path1)
-    for i in range(8, 21, 2):
+    for i in range(16, 21, 2):
         num = i
-        figure = random_figure(num)
+        figure = random_figure(num, True)
         adj = adjacent(figure)
         t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
         t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
         t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
         t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
-        T1 = t1.timeit(1)
-        T2 = t2.timeit(1)
-        T3 = t3.timeit(1)
+        
         T4 = t4.timeit(1)
-        logToDB([num, T1, "BFS"])
-        logToDB([num, T2, "DFS"])
-        logToDB([num, T3, "sBFS"])
-        logToDB([num, T4, "sDFS"])
+        T2 = t2.timeit(1)
+        T1 = t1.timeit(1)
+        T3 = t3.timeit(1)
+        #logToDB([num, T1, "BFS"])
+        #logToDB([num, T2, "DFS"])
+        #logToDB([num, T3, "sBFS"])
+        #logToDB([num, T4, "sDFS"])
     
     #if T1>T3:
     #    print "yes"
