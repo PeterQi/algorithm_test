@@ -14,7 +14,7 @@ def random_figure(num, full = False):#随机生成图，full为True时生成有�
             figure[i][i] = -1
             for j in range(i):
                 figure[i][j] = random.randint(1, longest_distance)
-                figure[j][i] = figure[i][j]
+                figure[j][i] = random.randint(1, longest_distance)
     else:
         for i in range(num):
             figure[i][i] = -1
@@ -226,8 +226,7 @@ def exist_path(figure_E):#返回不能使用的边集合
             it = i
             while next[it]!=-1:
                 it = next[it]
-            if it!=i:
-                not_path.append((figure_E[it][1], figure_E[i][0]))
+            not_path.append((figure_E[it][1], figure_E[i][0]))
     return not_path
 
 def branch_cut(figure):#分支限界法
@@ -241,11 +240,9 @@ def branch_cut(figure):#分支限界法
         top = heappop(h)
         if top[0]>=Hamiltonian:
             continue
-        print top[0]
-        for i in top[1]:
-            print i
-        print top[2]
-        print top[3]
+        
+        if len(top[2])==0:
+            continue
         f = []
         for point in top[2]:
             row_min = longest_distance*num
@@ -265,24 +262,17 @@ def branch_cut(figure):#分支限界法
                 max_point = i
                 
         
+        chosen_line = f[max_point][0]#下次扩展该节点
         if len(top[3])+1 == num:#找到一个解
-            print top[0]
-            for i in top[1]:
-                print i
-            print top[2]
-            print top[3]
             if top[0]+top[1][chosen_line[0]][chosen_line[1]]<Hamiltonian:
                 Hamiltonian = top[0]+top[1][chosen_line[0]][chosen_line[1]]
                 Hamiltonian_path = top[3]+[chosen_line]
                 continue
-        #print max_point
-        chosen_line = f[max_point][0]#下次扩展该节点
         leftnode_figure = copy.deepcopy(top[1])
         rightnode_figure = copy.deepcopy(top[1])
         
-        if len(top[3])+1 != num:#防止出现非哈密顿环
+        if len(top[3])+2 != num:#防止出现非哈密顿环
             not_path = exist_path(top[3]+[chosen_line])
-            #not_path = []
             for i in not_path:
                 leftnode_figure[i[0]][i[1]] = -1
         
@@ -290,24 +280,84 @@ def branch_cut(figure):#分支限界法
             leftnode_figure[chosen_line[0]][i] = -1
             leftnode_figure[i][chosen_line[1]] = -1
         tmp_cf = figure_change(leftnode_figure)
-        
-        leftnode = [tmp_cf[0]+top[0], tmp_cf[1], tmp_cf[2], top[3]+[chosen_line]]
+        lp = top[3] + [chosen_line]
+        leftnode = [tmp_cf[0]+top[0], tmp_cf[1], tmp_cf[2], lp]
         
         rightnode_figure[chosen_line[0]][chosen_line[1]] = -1
         tmp_cf2 = figure_change(rightnode_figure)
         rightnode = [tmp_cf2[0]+top[0], tmp_cf2[1], tmp_cf2[2], top[3]]
-        #print chosen_line
-        #print leftnode[0], leftnode[3]
-        #print rightnode[0]
         heappush(h, leftnode)
         heappush(h, rightnode)
-    return Hamiltonian_path
-def print_path(path):#打印分支限界法的输出
+    return Hamiltonian_path, Hamiltonian
+
+def sbranch_cut(figure):#分支限界法，找解用DFS
+    h = []
+    num = len(figure)
+    cf = figure_change(figure)
+    h.append(cf+[[]])#每一个节点，0表示路径下界，1表示其邻接矩阵，2表示为0的节点集合，3表示已有路径集合
+    Hamiltonian = longest_distance*num
+    Hamiltonian_path = -1
+    while len(h)>0:
+        top = h.pop()
+        if top[0]>=Hamiltonian:
+            continue
+        
+        if len(top[2])==0:
+            continue
+        f = []
+        for point in top[2]:
+            row_min = longest_distance*num
+            col_min = longest_distance*num
+            for i in range(num):
+                if top[1][point[0]][i]>=0 and i != point[1]:
+                    if top[1][point[0]][i]<row_min:
+                        row_min = top[1][point[0]][i]
+                if top[1][i][point[1]]>=0 and i != point[0]:
+                    if top[1][i][point[1]]<col_min:
+                        col_min = top[1][i][point[1]]
+            f.append((point, row_min+col_min))
+        max_point = 0
+        
+        for i in range(1, len(f)):
+            if f[i][1]>f[max_point][1]:
+                max_point = i
+                
+        
+        chosen_line = f[max_point][0]#下次扩展该节点
+        if len(top[3])+1 == num:#找到一个解
+            if top[0]+top[1][chosen_line[0]][chosen_line[1]]<Hamiltonian:
+                Hamiltonian = top[0]+top[1][chosen_line[0]][chosen_line[1]]
+                Hamiltonian_path = top[3]+[chosen_line]
+                continue
+        leftnode_figure = copy.deepcopy(top[1])
+        rightnode_figure = copy.deepcopy(top[1])
+        
+        if len(top[3])+2 != num:#防止出现非哈密顿环
+            not_path = exist_path(top[3]+[chosen_line])
+            for i in not_path:
+                leftnode_figure[i[0]][i[1]] = -1
+        
+        for i in range(num):
+            leftnode_figure[chosen_line[0]][i] = -1
+            leftnode_figure[i][chosen_line[1]] = -1
+        tmp_cf = figure_change(leftnode_figure)
+        lp = top[3] + [chosen_line]
+        leftnode = [tmp_cf[0]+top[0], tmp_cf[1], tmp_cf[2], lp]
+        
+        rightnode_figure[chosen_line[0]][chosen_line[1]] = -1
+        tmp_cf2 = figure_change(rightnode_figure)
+        rightnode = [tmp_cf2[0]+top[0], tmp_cf2[1], tmp_cf2[2], top[3]]
+        h.append(leftnode)
+        h.append(rightnode)
+    return Hamiltonian_path, Hamiltonian
+
+    
+def print_path(path_A):#打印分支限界法的输出
+    path = path_A[0]
+    print path_A[1]
     num = len(path)
     next = [-1 for i in range(num)]
     last = [-1 for i in range(num)]
-    print path
-    return
     for i in range(num):
         for j in range(i):
             if path[i][1]==path[j][0]:
@@ -318,11 +368,11 @@ def print_path(path):#打印分支限界法的输出
                 next[j] = i
                 last[i] = j
     it = 0
-    print it,
+    print path[it][0],
     while next[it]!=0:
         it = next[it]
-        print it,
-    print 0
+        print path[it][0],
+    print path[it][1]
 
 if __name__ == "__main__":
     figure = [[0,1,0,1,1],
@@ -337,13 +387,17 @@ if __name__ == "__main__":
                [28,46,88,33,-1,25,57],
                [3,88,18,46,92,-1,7],
                [44,26,33,27,84,39,-1]]
-    #E = ((3,4), (1,2), (2,3), (5,6), (7,9), (9,8))
-    #p = exist_path(E)
-    #print p
-    num = 10
-    #figure = random_figure(num, True)
-    path = branch_cut(figure2)
-    print_path(path)
+    figure3 = [[-1,5,-1,-1,-1,-1],
+               [-1,-1,5,-1,-1,-1],
+               [10,-1,-1,12,-1,-1],
+               [8,-1,-1,-1,-1,11],
+               [-1,-1,-1,7,-1,9],
+               [-1,-1,-1,-1,4,-1]]
+    while True:
+        num = 7
+        figure = random_figure(num, True)
+        path1 = branch_cut(figure)
+        print_path(path1)
     #for i in figure:
     #    print i
     
