@@ -416,20 +416,11 @@ if __name__ == "__main__":
     for i in range(8, 21, 2):
         num = i
         figure = random_figure(num)
-        adj = adjacent(figure)
-        t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
-        t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
-        t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
-        t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
+        #adj = adjacent(figure)
+        t1 = Timer("print_path(branch_cut(figure))", "from __main__ import print_path, branch_cut; figure="+str(figure))
         T1 = t1.timeit(1)
-        T2 = t2.timeit(1)
-        T3 = t3.timeit(1)
-        T4 = t4.timeit(1)
-        logToDB([num, T1, "BFS"])
-        logToDB([num, T2, "DFS"])
-        logToDB([num, T3, "sBFS"])
-        logToDB([num, T4, "sDFS"])
-    
+        logToDB([num, T1, "branch_cut"])
+        
     #if T1>T3:
     #    print "yes"
     #else:
