@@ -4,7 +4,7 @@ import MySQLdb
 con = 0
 cur = 0
 try:
-    con = MySQLdb.connect(host = "localhost", user = "algorithm_user", passwd = "123456", db = "algorithm")
+    con = MySQLdb.connect(host = "202.118.236.205", user = "web_user", passwd = "79007295", db = "algorithm")
     cur = con.cursor()
 except MySQLdb.Error,e:
     print "Mysql Error %d: %s" % (e.args[0], e.args[1])

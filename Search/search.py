@@ -389,7 +389,57 @@ def logToDB(log):
     cur.close()
     con.close()
 
+def exist_test(num):
+    figure = random_figure(num)
+    adj = adjacent(figure)
+    print "BFS:"
+    t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
+    T1 = t1.timeit(1)
+    print "Time:"+str(T1)+"s"
+    print
+    print "DFS:"
+    t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
+    T2 = t2.timeit(1)
+    print "Time:"+str(T2)+"s"
+    print
+    print "sBFS:"
+    t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
+    T3 = t3.timeit(1)
+    print "Time:"+str(T3)+"s"
+    print
+    print "sDFS:"
+    t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
+    T4 = t4.timeit(1)
+    print "Time:"+str(T4)+"s"
+    
+def min_test(num):
+    print "num:"+str(num)
+    figure = random_figure(num, True)
+    t1 = Timer("print_path(branch_cut(figure))", "from __main__ import print_path, branch_cut; figure="+str(figure))
+    T1 = t1.timeit(1)
+    print "Time:"+str(T1)+"s"
+    
 if __name__ == "__main__":
+    min_test(10)
+    exist_test(10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     #figure = [[0,1,0,1,1],
     #          [1,0,1,1,1],
     #          [0,1,0,1,0],
@@ -408,33 +458,6 @@ if __name__ == "__main__":
     #           [8,-1,-1,-1,-1,11],
     #           [-1,-1,-1,7,-1,9],
     #           [-1,-1,-1,-1,4,-1]]
-    for num in range(10, 21, 2):
-        #num = 8
-        print "num:"+str(num)
-        figure = random_figure(num, True)
-        t1 = Timer("print_path(branch_cut(figure))", "from __main__ import print_path, branch_cut; figure="+str(figure))
-        T1 = t1.timeit(1)
-        print "Time:"+str(T1)+"s"
-    #print "BFS:"
-    #t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
-    #T1 = t1.timeit(1)
-    #print "Time:"+str(T1)+"s"
-    #print
-    #print "DFS:"
-    #t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
-    #T2 = t2.timeit(1)
-    #print "Time:"+str(T2)+"s"
-    #print
-    #print "sBFS:"
-    #t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
-    #T3 = t3.timeit(1)
-    #print "Time:"+str(T3)+"s"
-    #print
-    #print "sDFS:"
-    #t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
-    #T4 = t4.timeit(1)
-    #print "Time:"+str(T4)+"s"
-    
     #for j in range(100):
     #    for i in range(8, 15):
     #        num = i

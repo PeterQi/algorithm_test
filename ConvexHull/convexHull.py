@@ -406,15 +406,69 @@ def printConvexHull(points, Divide, Graham, Brute = []):#画凸包
         y.append(i[1])
         plt.plot(x, y, ".")
     plt.show()
-if __name__ == "__main__":
-    #for points_num in range(10000, 100000, 1000):
-    points_num = 50
+
+
+def print_test(num, brutecome = False):
+    points_num = num
     points = random_points(points_num)
     c1 = DivideConvexHull(points)
     c2 = GrahamScan(points)
-    c3 = BruteForceCH1(points)
+    if brutecome:
+        c3 = BruteForceCH1(points)
+        printConvexHull(points, c1, c2, c3)
+    else:
+        printConvexHull(points, c1, c2)
+
+def time_test(num, brutecome = False):
+    points_num = num
+    points = random_points(points_num)
+    print "Divide:"
+    t1 = Timer("printDivideResult(points)", "from __main__ import printDivideResult; points = "+str(points))
+    time1 = str(t1.timeit(1))
+    print "Time: "+time1+"s"
+    
+    print "GrahamScan:"
+    t2 = Timer("GrahamScan(points)", "from __main__ import GrahamScan; points = "+str(points))
+    time2 = str(t2.timeit(1))
+    print "Time: "+time2+"s"
+    if not brutecome:
+        return
+    print "Brute:"
+    t3 = Timer("BruteForceCH1(points)", "from __main__ import BruteForceCH1; points = "+str(points))
+    time3 = str(t3.timeit(1))
+    print "Time: "+time3+"s"
+    
+if __name__ == "__main__":
+    #print_test(50)
+    time_test(50, True)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #for points_num in range(10000, 100000, 1000):
+    #points_num = 50
+    #points = random_points(points_num)
+    #c1 = DivideConvexHull(points)
+    #c2 = GrahamScan(points)
+    #c3 = BruteForceCH1(points)
     #printConvexHull(points, c1, c2)
-    printConvexHull(points, c1, c2, c3)
+    #printConvexHull(points, c1, c2, c3)
     #print "Divide:"
     #t1 = Timer("printDivideResult(points)", "from __main__ import printDivideResult; points = "+str(points))
     #time1 = str(t1.timeit(1))
@@ -430,7 +484,6 @@ if __name__ == "__main__":
     #time3 = str(t3.timeit(1))
     #print "Time: "+time3+"s"
     #logToDB([points_num, time3, 2])
-    
     
     
     
