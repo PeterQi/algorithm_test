@@ -46,12 +46,8 @@ def BFS(figure, adj = []):
         adj = adjacent(figure)
     for i in adj[0]:
         l.put([i])
-    print_level = 1
     while not l.empty():
         top = l.get()
-        if len(top)>=print_level:
-            print print_level
-            print_level+=1
         if len(top)==num and top[-1] == 0:
             Hamiltonian = True
             break
@@ -394,55 +390,74 @@ def logToDB(log):
     con.close()
 
 if __name__ == "__main__":
-    figure = [[0,1,0,1,1],
-              [1,0,1,1,1],
-              [0,1,0,1,0],
-              [1,1,1,0,0],
-              [1,1,0,0,0]]
-    figure2 = [[-1,3,93,13,33,9,57],
-               [4,-1,77,42,21,16,34],
-               [45,17,-1,36,16,28,25],
-               [39,90,80,-1,56,7,91],
-               [28,46,88,33,-1,25,57],
-               [3,88,18,46,92,-1,7],
-               [44,26,33,27,84,39,-1]]
-    figure3 = [[-1,5,-1,-1,-1,-1],
-               [-1,-1,5,-1,-1,-1],
-               [10,-1,-1,12,-1,-1],
-               [8,-1,-1,-1,-1,11],
-               [-1,-1,-1,7,-1,9],
-               [-1,-1,-1,-1,4,-1]]
-    #while True:
-    #    num = 7
-    #    figure = random_figure(num, True)
-    #    path1 = branch_cut(figure)
-    #    print_path(path1)
-    for i in range(16, 21, 2):
-        num = i
+    #figure = [[0,1,0,1,1],
+    #          [1,0,1,1,1],
+    #          [0,1,0,1,0],
+    #          [1,1,1,0,0],
+    #          [1,1,0,0,0]]
+    #figure2 = [[-1,3,93,13,33,9,57],
+    #           [4,-1,77,42,21,16,34],
+    #           [45,17,-1,36,16,28,25],
+    #           [39,90,80,-1,56,7,91],
+    #           [28,46,88,33,-1,25,57],
+    #           [3,88,18,46,92,-1,7],
+    #           [44,26,33,27,84,39,-1]]
+    #figure3 = [[-1,5,-1,-1,-1,-1],
+    #           [-1,-1,5,-1,-1,-1],
+    #           [10,-1,-1,12,-1,-1],
+    #           [8,-1,-1,-1,-1,11],
+    #           [-1,-1,-1,7,-1,9],
+    #           [-1,-1,-1,-1,4,-1]]
+    for num in range(10, 21, 2):
+        #num = 8
+        print "num:"+str(num)
         figure = random_figure(num, True)
-        adj = adjacent(figure)
-        t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
-        t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
-        t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
-        t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
-        
-        T4 = t4.timeit(1)
-        T2 = t2.timeit(1)
+        t1 = Timer("print_path(branch_cut(figure))", "from __main__ import print_path, branch_cut; figure="+str(figure))
         T1 = t1.timeit(1)
-        T3 = t3.timeit(1)
-        #logToDB([num, T1, "BFS"])
-        #logToDB([num, T2, "DFS"])
-        #logToDB([num, T3, "sBFS"])
-        #logToDB([num, T4, "sDFS"])
+        print "Time:"+str(T1)+"s"
+    #print "BFS:"
+    #t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
+    #T1 = t1.timeit(1)
+    #print "Time:"+str(T1)+"s"
+    #print
+    #print "DFS:"
+    #t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
+    #T2 = t2.timeit(1)
+    #print "Time:"+str(T2)+"s"
+    #print
+    #print "sBFS:"
+    #t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
+    #T3 = t3.timeit(1)
+    #print "Time:"+str(T3)+"s"
+    #print
+    #print "sDFS:"
+    #t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
+    #T4 = t4.timeit(1)
+    #print "Time:"+str(T4)+"s"
     
-    #if T1>T3:
-    #    print "yes"
-    #else:
-    #    print "no"
-    #if T2>T4:
-    #    print "yes"
-    #else:
-    #    print "no"
-    #print T1, T3
-    #print T2, T4
+    #for j in range(100):
+    #    for i in range(8, 15):
+    #        num = i
+    #        figure = random_figure(num)
+    #        adj = adjacent(figure)
+    #        t1 = Timer("BFS(figure, adj)", "from __main__ import BFS; figure="+str(figure)+"; adj="+str(adj))
+    #        t2 = Timer("DFS(figure, adj)", "from __main__ import DFS; figure="+str(figure)+"; adj="+str(adj))
+    #        t3 = Timer("sBFS(figure, adj)", "from __main__ import sBFS; figure="+str(figure)+"; adj="+str(adj))
+    #        t4 = Timer("sDFS(figure, adj)", "from __main__ import sDFS; figure="+str(figure)+"; adj="+str(adj))
+    #        
+    #        T4 = t4.timeit(1)
+    #        T2 = t2.timeit(1)
+    #        T1 = t1.timeit(1)
+    #        T3 = t3.timeit(1)
+    #        logToDB([num, T1, "BFS"])
+    #        logToDB([num, T2, "DFS"])
+    #        logToDB([num, T3, "sBFS"])
+    #        logToDB([num, T4, "sDFS"])
+    #for i in range(100):
+    #    for i in range(20, 33):
+    #        num = i
+    #        figure = random_figure(num, True)
+    #        t1 = Timer("print_path(branch_cut(figure))", "from __main__ import print_path, branch_cut; figure="+str(figure))
+    #        T1 = t1.timeit(1)
+    #        logToDB([num, T1, "branch_cut"])
     

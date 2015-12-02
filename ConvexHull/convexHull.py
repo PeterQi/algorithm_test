@@ -1,5 +1,6 @@
 # coding: UTF-8
 import random
+import matplotlib.pyplot as plt
 import math
 from timeit import Timer
 Pi = 3.14159265358979323846264338327
@@ -70,6 +71,7 @@ def sortANDprint(points):#将得到的凸包顶点集合按照逆时针方向排
         print i
     for j in SU:
         print j
+    return SL+SU
 
 def sGrahamScan(points):#无需极角排序的Graham-Scan算法
     result_points = []
@@ -200,7 +202,7 @@ def BruteForceCH1(points):#蛮力算法
     for i in range(num):
         if (convexHullIndexs[i]>=0):
             convexHull.append(points[i])
-    sortANDprint(convexHull)                            
+    return sortANDprint(convexHull)                       
 
 def GrahamScan(points):#Graham-Scan算法
     points = angle_sort(points)
@@ -349,24 +351,84 @@ def logToDB(log):
     cur.close()
     con.close()
 
+def printConvexHull(points, Divide, Graham, Brute = []):#画凸包
+    plt.title("convexHull")
+    plt.figure(1)
+    x = []
+    y = []
+    for i in Divide:
+        x.append(i[0])
+        y.append(i[1])
+    x.append(Divide[0][0])
+    y.append(Divide[0][1])
+    plt.subplot(221)
+    plt.plot(x, y)
+    x = []
+    y = []
+    for i in points:
+        x.append(i[0])
+        y.append(i[1])
+        plt.plot(x, y, ".")
+        
+    x = []
+    y = []
+    for i in Graham:
+        x.append(i[0])
+        y.append(i[1])
+    x.append(Graham[0][0])
+    y.append(Graham[0][1])
+    plt.subplot(222)
+    plt.plot(x, y)
+    x = []
+    y = []
+    for i in points:
+        x.append(i[0])
+        y.append(i[1])
+        plt.plot(x, y, ".")
+        
+    if len(Brute)==0:
+        plt.show()
+        return
+        
+    x = []
+    y = []
+    for i in Brute:
+        x.append(i[0])
+        y.append(i[1])
+    x.append(Brute[0][0])
+    y.append(Brute[0][1])
+    plt.subplot(223)
+    plt.plot(x, y)
+    x = []
+    y = []
+    for i in points:
+        x.append(i[0])
+        y.append(i[1])
+        plt.plot(x, y, ".")
+    plt.show()
 if __name__ == "__main__":
     #for points_num in range(10000, 100000, 1000):
-    points_num = 40
+    points_num = 50
     points = random_points(points_num)
-    print "Divide:"
-    t1 = Timer("printDivideResult(points)", "from __main__ import printDivideResult; points = "+str(points))
-    time1 = str(t1.timeit(1))
-    print "Time: "+time1+"s"
-    #logToDB([points_num, time1, 0])
-    print "GrahamScan:"
-    t2 = Timer("GrahamScan(points)", "from __main__ import GrahamScan; points = "+str(points))
-    time2 = str(t2.timeit(1))
-    print "Time: "+time2+"s"
-    #logToDB([points_num, time2, 1])
-    print "Brute:"
-    t3 = Timer("BruteForceCH1(points)", "from __main__ import BruteForceCH1; points = "+str(points))
-    time3 = str(t3.timeit(1))
-    print "Time: "+time3+"s"
+    c1 = DivideConvexHull(points)
+    c2 = GrahamScan(points)
+    c3 = BruteForceCH1(points)
+    #printConvexHull(points, c1, c2)
+    printConvexHull(points, c1, c2, c3)
+    #print "Divide:"
+    #t1 = Timer("printDivideResult(points)", "from __main__ import printDivideResult; points = "+str(points))
+    #time1 = str(t1.timeit(1))
+    #print "Time: "+time1+"s"
+    ##logToDB([points_num, time1, 0])
+    #print "GrahamScan:"
+    #t2 = Timer("GrahamScan(points)", "from __main__ import GrahamScan; points = "+str(points))
+    #time2 = str(t2.timeit(1))
+    #print "Time: "+time2+"s"
+    ##logToDB([points_num, time2, 1])
+    #print "Brute:"
+    #t3 = Timer("BruteForceCH1(points)", "from __main__ import BruteForceCH1; points = "+str(points))
+    #time3 = str(t3.timeit(1))
+    #print "Time: "+time3+"s"
     #logToDB([points_num, time3, 2])
     
     
