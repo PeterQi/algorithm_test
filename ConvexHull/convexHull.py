@@ -170,13 +170,13 @@ def BruteForceCH1(points):#蛮力算法
     convexHullIndexs = range(num)
     for i in range(num):
         for j in range(num):
-            if j == i:
+            if convexHullIndexs[j] == -1 or j == i :
                 continue
             for p in range(num):
-                if p == j or p == i:
+                if convexHullIndexs[p] == -1 or p == j or p == i:
                     continue
                 for q in range(num):
-                    if q == p or q == j or q == i:
+                    if  convexHullIndexs[q] == -1 or q == p or q == j or q == i:
                         continue
                     ij_line = lines[i][j]
                     a_line = is_line(ij_line, points[p])
@@ -439,8 +439,8 @@ def time_test(num, brutecome = False):
     print "Time: "+time3+"s"
     
 if __name__ == "__main__":
-    #print_test(50)
-    time_test(50, True)
+    print_test(1000, True)
+    #time_test(2000, True)
     
     
     
