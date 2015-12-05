@@ -439,8 +439,8 @@ def time_test(num, brutecome = False):
     print "Time: "+time3+"s"
     
 if __name__ == "__main__":
-    print_test(1000, True)
-    #time_test(2000, True)
+    #print_test(1000, True)
+    time_test(3000, True)
     
     
     
