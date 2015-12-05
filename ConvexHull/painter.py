@@ -8,13 +8,13 @@ try:
     cur = con.cursor()
 except MySQLdb.Error,e:
     print "Mysql Error %d: %s" % (e.args[0], e.args[1])
-query = 'SELECT num, avg(time) FROM `convexhull` WHERE algorithm_id = 0 group by num order by num'
+query = 'SELECT num, avg(time) FROM `convexhull` WHERE algorithm_id = "DivideConvexHull" group by num order by num'
 cur.execute(query)
 results0 = cur.fetchall()
-query = 'SELECT num, avg(time) FROM `convexhull` WHERE algorithm_id = 1 group by num order by num'
+query = 'SELECT num, avg(time) FROM `convexhull` WHERE algorithm_id = "GrahamScan" group by num order by num'
 cur.execute(query)
 results1 = cur.fetchall()
-query = 'SELECT num, avg(time) FROM `convexhull` WHERE algorithm_id = 2 group by num order by num'
+query = 'SELECT num, avg(time) FROM `convexhull` WHERE algorithm_id = "BruteForceCH1" group by num order by num'
 cur.execute(query)
 results2 = cur.fetchall()
 

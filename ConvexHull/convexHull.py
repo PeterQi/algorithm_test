@@ -170,13 +170,13 @@ def BruteForceCH1(points):#蛮力算法
     convexHullIndexs = range(num)
     for i in range(num):
         for j in range(num):
-            if convexHullIndexs == -1 or j == i:
+            if convexHullIndexs[j] == -1 or j == i:
                 continue
             for p in range(num):
-                if convexHullIndexs == -1 or p == j or p == i:
+                if convexHullIndexs[p] == -1 or p == j or p == i:
                     continue
                 for q in range(num):
-                    if convexHullIndexs == -1 or q == p or q == j or q == i:
+                    if convexHullIndexs[q] == -1 or q == p or q == j or q == i:
                         continue
                     ij_line = lines[i][j]
                     a_line = is_line(ij_line, points[p])
@@ -406,15 +406,56 @@ def printConvexHull(points, Divide, Graham, Brute = []):#画凸包
         y.append(i[1])
         plt.plot(x, y, ".")
     plt.show()
-if __name__ == "__main__":
-    #for points_num in range(10000, 100000, 1000):
-    points_num = 1000
+
+def print_test(num, brutecome = False):
+    points_num = num
     points = random_points(points_num)
     c1 = DivideConvexHull(points)
     c2 = GrahamScan(points)
-    c3 = BruteForceCH1(points)
-    #printConvexHull(points, c1, c2)
-    printConvexHull(points, c1, c2, c3)
+    if brutecome:
+        c3 = BruteForceCH1(points)
+        printConvexHull(points, c1, c2, c3)
+    else:
+        printConvexHull(points, c1, c2)
+
+def time_test(num, brutecome = False):
+    points_num = num
+    points = random_points(points_num)
+    print "Divide:"
+    t1 = Timer("printDivideResult(points)", "from __main__ import printDivideResult; points = "+str(points))
+    time1 = str(t1.timeit(1))
+    print "Time: "+time1+"s"
+    logToDB([points_num, time1, "DivideConvexHull"])
+    
+    print "GrahamScan:"
+    t2 = Timer("GrahamScan(points)", "from __main__ import GrahamScan; points = "+str(points))
+    time2 = str(t2.timeit(1))
+    print "Time: "+time2+"s"
+    logToDB([points_num, time2, "GrahamScan"])
+    if not brutecome:
+        return
+    print "Brute:"
+    t3 = Timer("BruteForceCH1(points)", "from __main__ import BruteForceCH1; points = "+str(points))
+    time3 = str(t3.timeit(1))
+    print "Time: "+time3+"s"
+    logToDB([points_num, time3, "BruteForceCH1"])
+    
+if __name__ == "__main__":
+    #print_test(1000, True)
+    
+    for i in range(100, 3100, 100):
+        time_test(i, True)
+    
+    
+    
+    #for points_num in range(10000, 100000, 1000):
+    #points_num = 1000
+    #points = random_points(points_num)
+    #c1 = DivideConvexHull(points)
+    #c2 = GrahamScan(points)
+    #c3 = BruteForceCH1(points)
+    ##printConvexHull(points, c1, c2)
+    #printConvexHull(points, c1, c2, c3)
     #print "Divide:"
     #t1 = Timer("printDivideResult(points)", "from __main__ import printDivideResult; points = "+str(points))
     #time1 = str(t1.timeit(1))
