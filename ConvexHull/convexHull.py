@@ -170,13 +170,13 @@ def BruteForceCH1(points):#蛮力算法
     convexHullIndexs = range(num)
     for i in range(num):
         for j in range(num):
-            if j == i:
+            if convexHullIndexs == -1 or j == i:
                 continue
             for p in range(num):
-                if p == j or p == i:
+                if convexHullIndexs == -1 or p == j or p == i:
                     continue
                 for q in range(num):
-                    if q == p or q == j or q == i:
+                    if convexHullIndexs == -1 or q == p or q == j or q == i:
                         continue
                     ij_line = lines[i][j]
                     a_line = is_line(ij_line, points[p])
@@ -408,7 +408,7 @@ def printConvexHull(points, Divide, Graham, Brute = []):#画凸包
     plt.show()
 if __name__ == "__main__":
     #for points_num in range(10000, 100000, 1000):
-    points_num = 50
+    points_num = 1000
     points = random_points(points_num)
     c1 = DivideConvexHull(points)
     c2 = GrahamScan(points)
